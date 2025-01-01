@@ -4,21 +4,23 @@ import '../styles/RewardsCalculator.css'
 
 const RewardsCalculator = () => {
     const[transactionsData, setTransactionsData] = useState([])
+    const [loading, setLoading] = useState(false)
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true)
             const transactions = await fetchTransactionsData()
             setTransactionsData(transactions)
+            setLoading(false)
         }
         fetchData()
     }, [])    
     const dataWithPoints = addPointsToData(transactionsData)
     const lengthArray = [...new Set(dataWithPoints?.map(t =>t.id))]
 
-
     return (
         <div>
             <h1>Rewards Calculator</h1>
-            {lengthArray?.map(id => {
+            {loading ? <div>Please wait the table is loading...</div> : lengthArray?.map(id => {
                 const displayRecords = dataWithPoints?.filter(val => val.id === id)
                 const totalPoints = calculateTotalPoints(displayRecords)
                 return (

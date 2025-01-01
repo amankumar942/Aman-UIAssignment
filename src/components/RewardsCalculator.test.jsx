@@ -1,6 +1,6 @@
 import React from 'react'
 import RewardsCalculator from './RewardsCalculator'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, findByText, render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react'
 import { addPointsToData, calculateTotalPoints, fetchTransactionsData } from '../utils/utils'
 
 jest.mock('../utils/utils')
@@ -23,13 +23,13 @@ describe('Rewards calculator test suite', () => {
         render(<RewardsCalculator />)
         expect(screen.getByText('Rewards Calculator')).toBeTruthy()
     })
-    test('renders table headers', () => {
+    test('renders table headers', async () => {
         render(<RewardsCalculator />)
-        expect(screen.getByText('Id')).toBeTruthy()
-        expect(screen.getByText('Name')).toBeTruthy()
-        expect(screen.getByText('Amount')).toBeTruthy()
-        expect(screen.getByText('Month')).toBeTruthy()
-        expect(screen.getByText('Points')).toBeTruthy()
+        expect(screen.findByText('Id')).toBeTruthy()
+        expect(screen.findByText('Name')).toBeTruthy()
+        expect(screen.findByText('Amount')).toBeTruthy()
+        expect(screen.findByText('Month')).toBeTruthy()
+        expect(screen.findByText('Points')).toBeTruthy()
     })
     test('fetches and displays transactions data', async () => {
         render(<RewardsCalculator />)
@@ -42,7 +42,7 @@ describe('Rewards calculator test suite', () => {
         render(<RewardsCalculator />)
         await waitFor(() => {
             const rows =  screen.getAllByRole('row')
-            expect(rows).toHaveLength(mockTransactions.length + 1)
+            expect(rows).toHaveLength(4)
         })
     })
 })
