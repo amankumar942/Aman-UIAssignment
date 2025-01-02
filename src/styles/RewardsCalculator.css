@@ -4,3 +4,9 @@
 .table {
     width: 100%
 }
+.totalPoints {
+    display: block;
+    text-align: left;
+    padding: 1rem;
+    font-weight: 500;
+}
