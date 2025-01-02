@@ -5,6 +5,8 @@ import '../styles/RewardsCalculator.css'
 
 const RewardsCalculator = () => {
     const[transactionsData, setTransactionsData] = useState([])
+    const [searchTerm, setSearchTerm] = useState('')
+    const [filteredData, setFilteredData] = useState([])
     const [loading, setLoading] = useState(false)
     useEffect(() => {
         const fetchData = async () => {
@@ -19,13 +21,45 @@ const RewardsCalculator = () => {
             }
         }
         fetchData()
-    }, [])    
+    }, [])
+
     const dataWithPoints = addPointsToData(transactionsData)
     const totalPoints = calculateTotalPoints(dataWithPoints)
+
+    useEffect(() => {
+        setFilteredData(dataWithPoints)
+    }, [dataWithPoints])
+
+    function debounce (fn , delay) {
+        let timeoutId
+        return function(...args) {
+            let context = this
+            if (timeoutId) {
+                clearTimeout(timeoutId)
+            }
+            timeoutId = setTimeout(() => {
+                fn.apply(context,args)
+            }, delay)
+        }
+    }
+
+    const search = (query) => {
+        const filtered = dataWithPoints?.filter(val => {
+            return val.name.toLowerCase().includes(query)
+        })
+        setFilteredData(filtered)
+    }
+    const debouncedSearch = debounce(search, 1000)
+
+    const handleChange = (e) => {
+        setSearchTerm(e.target.value)
+        debouncedSearch(e.target.value)
+    }
 
     return (
         <div>
             <h1>Rewards Calculator</h1>
+            <input type="text" placeholder='search name' value={searchTerm} onChange={handleChange} />
             {loading ? <div>Please wait the table is loading...</div> : 
             <div className='table-container'>
                 <table border="1" className="table">
@@ -40,7 +74,7 @@ const RewardsCalculator = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {dataWithPoints?.map((item) => {
+                        {filteredData?.map((item) => {
                             return (
                                 <tr key={item.id}>
                                     <td>{item.id}</td>
